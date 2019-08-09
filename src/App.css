@@ -23,6 +23,32 @@
   color: #61dafb;
 }
 
+.divisor {
+    position:absolute;
+		top: 10px;
+		left: 0px;
+    z-index: 1;
+    margin-top: 50px;
+}
+
+.iconCategoria{
+    margin-top: 30px;
+    position:absolute;
+		top: '25%';
+		left: 0px;
+		z-index: 2;
+}
+
+.edit {
+  background-color: #2980b9; /* Green */
+  border: none;
+  color: #2980b9;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 10px;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
