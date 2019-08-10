@@ -2,6 +2,7 @@ import React from 'react';
 import { InputGroup, DropdownButton, FormControl, Dropdown, Row } from 'react-bootstrap';
 import MovieCard from './MovieCard';
 import './App.css';
+import ReactDOM from 'react-dom';
 import * as firebase from 'firebase';
 firebase.initializeApp({
   apiKey: "AIzaSyDYMYYByMXC0FApCX0srt6BpyKcFt87dd8",
@@ -16,10 +17,10 @@ firebase.initializeApp({
 function createMovie() {
   var newMovieKey = firebase.database().ref('peliculas').push().key;
   firebase.database().ref('peliculas/' + newMovieKey).set({
-    nombre: 'Vengers',
-    duracion: 'Pryev',
-    director: 'imageUrl',
-    categoria: 'amor',
+    nombre: 'EndGame',
+    duracion: 60,
+    director: 'Russo Brothers',
+    categoria: 'Acción',
     reparto: [
       'Hola', 'Adios'
     ]
@@ -33,15 +34,10 @@ async function queryMovies(name, property) {
     var childData = childSnapshot.val();
     movies.push({ ...childData, key: childKey });
   });
-  console.log(movies);
-  const regexp = new RegExp(name, 'i');
-  const arr = movies.filter(x => regexp.test(x[property]));
-  console.log(arr);
+  const arr = movies.filter((value) => {
+    return value[property].toLowerCase().includes(name.toLowerCase());
+  })
   return arr;
-}
-
-function modifyMovie(modifiedMovie, key) {
-  firebase.database().ref('/peliculas/' + key).set(modifiedMovie);
 }
 
 function deleteMovie(key){
@@ -51,22 +47,47 @@ function deleteMovie(key){
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { showModal: false, queryMethod: 'Nombre' };
+    this.state = { showModal: false, queryMethod: 'Nombre', movies: [] };
   } 
+  modifyMovie(modifiedMovie, key) {
+    firebase.database().ref('/peliculas/' + key).set(modifiedMovie);
+  }
+  componentWillMount(){
+    queryMovies('', this.state.queryMethod.toLowerCase()).then((res) => {
+      console.log('result', res);
+      this.setState({movies: res});
+    });
+  }
   componentDidMount() {
-    /*createMovie();
-    queryMovies('Vengers', 'nombre').then((movies) => {
+    createMovie();
+    /*queryMovies('Vengers', 'nombre').then((movies) => {
       modifyMovie({newObject: 'asdsad'}, movies[0].key);
       deleteMovie(movies[0].key);
     });*/
   }
+  refreshData(){
+    queryMovies('', this.state.queryMethod.toLowerCase()).then((res) => {
+      console.log('result', res);
+      this.setState({movies: res});
+    });
+  }
+  handleInput(){
+    const input = ReactDOM.findDOMNode(this.refs.queryInput).value;
+    console.log(input);
+    queryMovies(input, this.state.queryMethod.toLowerCase()).then((res) => {
+      console.log('result', res);
+      this.setState({movies: res});
+    });
+  }
   render() {
     return (
-      <div className="App" style={{ margin: 10 }}>´
+      <div className="App" style={{ margin: 10 }}>
        <InputGroup>
           <FormControl
             placeholder={this.state.queryMethod === 'Nombre' ? 'Avengers' : 'Cuarón'}
+            onInput={() => this.handleInput()}
             aria-describedby="basic-addon2"
+            ref='queryInput'
           />
 
           <DropdownButton
@@ -80,21 +101,25 @@ class App extends React.Component {
           </DropdownButton>
         </InputGroup>
         <Row style={{padding: 30, marginBottom: 30}}>
-          <MovieCard style={{margin: 10}}/>
-          <div style={{width: 30, height: 10, marginBottom: 30}}></div>
-          <MovieCard style={{margin: 10}}/>
-          <div style={{width: 30, height: 10}}></div>
-          <MovieCard style={{margin: 10}}/>
-          <div style={{width: 30, height: 10}}></div>
-          <MovieCard style={{margin: 10}}/>
-          <div style={{width: 30, height: 10}}></div>
-          <MovieCard style={{margin: 10}}/>
-          <div style={{width: 30, height: 10}}></div>
-          <MovieCard style={{marginTop: 10}}/>
-          <div style={{width: 30, height: 10}}></div>
-          <MovieCard style={{margin: 10}}/>
-          <div style={{width: 30, height: 10}}></div>
-          <MovieCard style={{margin: 10}}/>
+          {
+            this.state.movies.map((movie, idx) => {
+              return (
+                <div key={movie.key}>
+                  <MovieCard 
+                    style={{margin: 10}}
+                    titulo={movie.nombre}
+                    director={movie.director}
+                    duracion={movie.duracion}
+                    categoria={movie.categoria}
+                    reparto={movie.reparto}
+                    save={this.modifyMovie}
+                    movieKey={movie.key}
+                    refresh={this.refreshData.bind(this)}
+                  />
+                </div>
+              );
+            })
+          }
         </Row>
       </div>
     );

@@ -16,15 +16,16 @@ class MovieCard extends React.Component {
     }
     handleClose = () => {
         this.setState({showModal: false});
+        this.props.refresh();
     }
     render() {
         return (
-            <div style={{marginBottom: 30}}>
-            <Card style={{ width: '18rem', backgroundColor: '#FF3434', borderRadius: 10, borderWidth: 0 }}>
+            <div style={{marginBottom: 30, marginRight: 30}}>
+            <Card style={{ width: '18rem', backgroundColor: '#FF3434', borderRadius: 10, height: 'auto', borderWidth: 0 }}>
                 <Row style={{ height: '30px' }}>
                     <Col xs={{ span: 8, offset: 8 }} style={{ color: 'white', marginTop: '5%' }}>
                         <Row>
-                            Acción
+                            {this.props.categoria}
                <button onClick={this.handleClick} className="edit" type="submit" variant="primary" style={{ marginTop: 4, marginLeft: 4, height: 20, width: 33, fontSize: 10, textAlign: 'center', color: 'white', borderRadius: '10%' }}>edit</button>
                         </Row>
                     </Col>
@@ -35,9 +36,9 @@ class MovieCard extends React.Component {
                     <hr className="divisor" style={{ backgroundColor: 'white', width: '100%', height: 10, opacity: 1 }} />
                 </Row>
                 <Card.Body style={{ marginTop: '18%', alignContent: 'flex-end', color: 'white' }}>
-                    <Card.Title style={{ textAlign: 'left', fontSize: 24 }} >Endgame</Card.Title>
+                    <Card.Title style={{ textAlign: 'left', fontSize: 24 }} >{this.props.titulo}</Card.Title>
                     <Card.Text style={{ textAlign: 'left' }}>
-                        87 min
+                        {this.props.duracion} min
             </Card.Text>
                     <div style={{ marginBottom: 10, height: 1 }}>
 
@@ -51,29 +52,32 @@ class MovieCard extends React.Component {
                             </Col>
                             <Col xs={{ span: 8, offset: 0 }}>
                                 <Card.Text style={{ textAlign: 'left' }}>
-                                    John Favreu
+                                   {this.props.director}
                 </Card.Text>
                             </Col>
                         </Row>
-                        <Row style={{ height: '30px', marginTop: '10px' }}>
+                        <Row style={{ height: 'auto', marginTop: '10px' }}>
                             <Col xs={{ span: 4, offset: 0 }}>
                                 <Card.Text style={{ textAlign: 'left', lineHeight: '2px', opacity: .5 }}>
                                     Reparto
-                </Card.Text>
+                                 </Card.Text>
                             </Col>
                             <Col xs={{ span: 8, offset: 0 }}>
-                                <p style={{ textAlign: 'left', lineHeight: '2px' }}>
-                                    Chris Evans
-                </p>
-                                <p style={{ textAlign: 'left', lineHeight: '2px' }}>
-                                    Robert Downey Jr.
-                </p>
+                            {this.props.reparto.map((field, idx) => {
+                                    return (
+                                        <div key={`${field}-${idx}`}>
+                                            <p style={{ textAlign: 'left', lineHeight: '2px' }}>
+                                                {field}
+                                            </p>
+                                        </div>
+                                    );
+                                })}
                             </Col>
                         </Row>
                     </div>
                 </Card.Body>
                 
-        <Editor showModal={this.state.showModal} close={this.handleClose.bind(this)}></Editor>
+        <Editor showModal={this.state.showModal} close={this.handleClose.bind(this)} save={this.props.save} movie={this.props} movieKey={this.props.movieKey}></Editor>
             </Card>
             </div>
         );
