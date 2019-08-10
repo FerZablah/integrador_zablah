@@ -1,5 +1,24 @@
 .App {
   text-align: center;
+  font-family: 'Roboto'
+}
+
+.Categoria-ButtonSelected{
+  background-color: #FEAD0E !important;
+  border-color:  #FEAD0E !important;
+  font-style: medium;
+}
+
+.categoriaMenu{
+  background-color:white !important;
+  border-bottom-color: white !important;
+  border-color:  white !important;
+}
+
+.Categoria-Button{
+  background-color: white !important;
+  color: black !important;
+  font-style: medium;
 }
 
 .App-logo {

@@ -35,14 +35,16 @@ class Editor extends React.Component {
         this.setState({reparto: newReparto});
     }
     resetState(){
-        this.setState({
+        if(this.props.new){  
+            this.setState({
                 duracion: 60,
                 titulo: '',
                 reparto: [],
                 categoria: 'Amor',
                 director: '',
                 repartoInput: ''
-        })
+            });
+        }
     }
     onChange = (value, property) => {
         this.setState({ [property]: value });
@@ -61,7 +63,6 @@ class Editor extends React.Component {
       }
     render() {
         const { reparto } = this.state;
-        console.log(this.props);
         return (
             <>
                 <Modal show={this.props.showModal} onHide={() => {
@@ -99,7 +100,7 @@ class Editor extends React.Component {
                                     onChange={(e) => this.onChange(e.target.value, 'repartoInput')}
                                 />
                                 <InputGroup.Append>
-                                    <Button variant="success" disabled={this.state.repartoInput.length === 0} onClick={() => this.setState({reparto: [...this.state.reparto, ReactDOM.findDOMNode(this.refs.reparto).value]})}>Añadir</Button>
+                                    <Button variant="success" disabled={this.state.repartoInput.length === 0} onClick={() => this.setState({repartoInput: '', reparto: [...this.state.reparto, ReactDOM.findDOMNode(this.refs.reparto).value]})}>Añadir</Button>
                                 </InputGroup.Append>
                             </InputGroup>
                             <div style={{marginTop: 10}}>

@@ -45,6 +45,7 @@ class App extends React.Component {
     this.state = { showModal: false, queryMethod: 'Nombre', movies: [], categoria: undefined };
   } 
   modifyMovie(modifiedMovie, key) {
+    modifiedMovie.duracion = parseInt(modifiedMovie.duracion);
     firebase.database().ref('/peliculas/' + key).set(modifiedMovie);
   }
   componentWillMount(){
@@ -94,26 +95,31 @@ class App extends React.Component {
             <Dropdown.Item onClick={() => this.setState({queryMethod: 'Director'})}>Director</Dropdown.Item>
           </DropdownButton>
         </InputGroup>
-        <ButtonGroup aria-label="Basic example" style={{marginTop: 10}}>
-          <Button onClick={() => {
-            this.setState({categoria: this.state.categoria === 'Amor' ? undefined : 'Amor'}, function () {
-              this.refreshData();
-            });
-          }} variant={this.state.categoria === 'Amor' ? "primary" : "secondary"}>Amor</Button>
-          <Button onClick={() => {
-            this.setState({categoria: this.state.categoria === 'Horror' ? undefined : 'Horror'}, function () {
-              this.refreshData();
-            });
-          }} variant={this.state.categoria === 'Horror' ? "primary" : "secondary"}>Horror</Button>
-          <Button  onClick={() => {
-            this.setState({categoria: this.state.categoria === 'Acción' ? undefined : 'Acción'}, function () {
-              this.refreshData();
-            });
-          }} variant={this.state.categoria === 'Acción' ? "primary" : "secondary"}>Acción</Button>
+        <div className="d-flex justify-content-center" style={{width: '100%', marginTop: 20}}>
+          <ButtonGroup aria-label="Basic example"  style={{marginTop: 10}}>
+            <Button className={this.state.categoria === 'Amor' ? "Categoria-ButtonSelected border border-white" : "Categoria-Button border border-white"}  onClick={() => {
+              this.setState({categoria: this.state.categoria === 'Amor' ? undefined : 'Amor'}, function () {
+                this.refreshData();
+              });
+            }}
+            >Amor</Button>
+            <Button className={this.state.categoria === 'Horror' ? "Categoria-ButtonSelected border border-white" : "Categoria-Button border border-white"} onClick={() => {
+              this.setState({categoria: this.state.categoria === 'Horror' ? undefined : 'Horror'}, function () {
+                this.refreshData();
+              });
+            }} 
+            >Horror</Button>
+            <Button className={this.state.categoria === 'Acción' ? "Categoria-ButtonSelected border border-white" : "Categoria-Button border border-white"} onClick={() => {
+              this.setState({categoria: this.state.categoria === 'Acción' ? undefined : 'Acción'}, function () {
+                this.refreshData();
+              });
+            }} >Acción</Button>
+          </ButtonGroup>
+       
+        <ButtonGroup style={{  marginLeft: 'auto', position: 'absolute', top: 58, right: 0, marginRight: 10}}aria-label="Basic example" >
+          <Button variant="success" onClick={() => this.setState({showModal: true})}>Añadir</Button>
         </ButtonGroup>
-        <ButtonGroup style={{justifyContent: 'flex-end'}}aria-label="Basic example" style={{marginTop: 10}}>
-          <Button variant="success" onClick={() => this.setState({showModal: true})}>Subir</Button>
-        </ButtonGroup>
+        </div>
         <Row style={{padding: 30, marginBottom: 30}}>
           {
             this.state.movies.map((movie, idx) => {
