@@ -65,6 +65,9 @@ class App extends React.Component {
       deleteMovie(movies[0].key);
     });*/
   }
+  handleDelete(key){
+    deleteMovie(key);
+  }
   refreshData(){
     queryMovies('', this.state.queryMethod.toLowerCase()).then((res) => {
       console.log('result', res);
@@ -115,6 +118,7 @@ class App extends React.Component {
                     save={this.modifyMovie}
                     movieKey={movie.key}
                     refresh={this.refreshData.bind(this)}
+                    delete={this.handleDelete.bind(this)}
                   />
                 </div>
               );

@@ -79,9 +79,15 @@ class Editor extends React.Component {
                         </Form.Group>
                     </Form>
                     <Modal.Footer>
+                        <Button variant="danger" style={{marginRight: '45%'}}onClick={() => {
+                                this.props.delete(this.props.movieKey);
+                                this.props.close();
+                            }}>
+                            Eliminar
+                        </Button>
                         <Button variant="secondary" onClick={this.props.close}>
                             Cancelar
-                </Button>
+                        </Button>
                         <Button disabled={this.state.titulo.length === 0 || this.state.director.length === 0 || this.state.reparto.length == 0} variant="primary" onClick={() => {
                             this.props.save({
                                 nombre: this.state.titulo,
@@ -94,7 +100,7 @@ class Editor extends React.Component {
                         }
                         }>
                             Guardar
-                </Button>
+                        </Button>
                     </Modal.Footer>
                 </Modal>
             </>

@@ -77,7 +77,7 @@ class MovieCard extends React.Component {
                     </div>
                 </Card.Body>
                 
-        <Editor showModal={this.state.showModal} close={this.handleClose.bind(this)} save={this.props.save} movie={this.props} movieKey={this.props.movieKey}></Editor>
+        <Editor showModal={this.state.showModal} delete={this.props.delete} close={this.handleClose.bind(this)} save={this.props.save} movie={this.props} movieKey={this.props.movieKey}></Editor>
             </Card>
             </div>
         );
