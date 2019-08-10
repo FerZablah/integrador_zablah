@@ -3,6 +3,7 @@ import { InputGroup, DropdownButton, ButtonGroup, FormControl, Dropdown, Row, Bu
 import MovieCard from './MovieCard';
 import './App.css';
 import ReactDOM from 'react-dom';
+import Editor from './modal';
 import * as firebase from 'firebase';
 firebase.initializeApp({
   apiKey: "AIzaSyDYMYYByMXC0FApCX0srt6BpyKcFt87dd8",
@@ -14,17 +15,9 @@ firebase.initializeApp({
   appId: "1:620664334343:web:8f3f0361f621f68b"
 });
 
-function createMovie() {
+function createMovie(movie) {
   var newMovieKey = firebase.database().ref('peliculas').push().key;
-  firebase.database().ref('peliculas/' + newMovieKey).set({
-    nombre: 'EndGame',
-    duracion: 60,
-    director: 'Russo Brothers',
-    categoria: 'Acción',
-    reparto: [
-      'Hola', 'Adios'
-    ]
-  });
+  firebase.database().ref('peliculas/' + newMovieKey).set(movie);
 }
 async function queryMovies(name, property, categoria) {
   const snap = await firebase.database().ref('/peliculas').once('value');
@@ -59,13 +52,6 @@ class App extends React.Component {
       this.setState({movies: res});
     });
   }
-  componentDidMount() {
-    createMovie();
-    /*queryMovies('Vengers', 'nombre').then((movies) => {
-      modifyMovie({newObject: 'asdsad'}, movies[0].key);
-      deleteMovie(movies[0].key);
-    });*/
-  }
   handleDelete(key){
     deleteMovie(key);
   }
@@ -79,6 +65,13 @@ class App extends React.Component {
     queryMovies(input, this.state.queryMethod.toLowerCase(), this.state.categoria).then((res) => {
       this.setState({movies: res});
     });
+  }
+  handleClose(){
+    this.setState({showModal: false});
+    this.refreshData();
+  }
+  handleSave(movie){
+    createMovie(movie);
   }
   render() {
     return (
@@ -104,22 +97,22 @@ class App extends React.Component {
         <ButtonGroup aria-label="Basic example" style={{marginTop: 10}}>
           <Button onClick={() => {
             this.setState({categoria: this.state.categoria === 'Amor' ? undefined : 'Amor'}, function () {
-              console.log(this.state.categoria);
               this.refreshData();
             });
           }} variant={this.state.categoria === 'Amor' ? "primary" : "secondary"}>Amor</Button>
           <Button onClick={() => {
             this.setState({categoria: this.state.categoria === 'Horror' ? undefined : 'Horror'}, function () {
-              console.log(this.state.categoria);
               this.refreshData();
             });
           }} variant={this.state.categoria === 'Horror' ? "primary" : "secondary"}>Horror</Button>
           <Button  onClick={() => {
             this.setState({categoria: this.state.categoria === 'Acción' ? undefined : 'Acción'}, function () {
-              console.log(this.state.categoria);
               this.refreshData();
             });
           }} variant={this.state.categoria === 'Acción' ? "primary" : "secondary"}>Acción</Button>
+        </ButtonGroup>
+        <ButtonGroup style={{justifyContent: 'flex-end'}}aria-label="Basic example" style={{marginTop: 10}}>
+          <Button variant="success" onClick={() => this.setState({showModal: true})}>Subir</Button>
         </ButtonGroup>
         <Row style={{padding: 30, marginBottom: 30}}>
           {
@@ -143,6 +136,7 @@ class App extends React.Component {
             })
           }
         </Row>
+        <Editor new showModal={this.state.showModal} save={this.handleSave} close={this.handleClose.bind(this)}></Editor>
       </div>
     );
   }

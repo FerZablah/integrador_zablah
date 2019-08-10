@@ -5,15 +5,28 @@ import { Modal, Button, Form, InputGroup, FormControl, Row, Dropdown} from 'reac
 class Editor extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            showModal: props.showModal,
-            duracion: props.movie.duracion,
-            titulo: props.movie.titulo,
-            reparto: props.movie.reparto,
-            categoria: 'Amor',
-            director: props.movie.director,
-            repartoInput: ''
-        };
+        if(props.movie){
+            this.state = {
+                showModal: props.showModal,
+                duracion: props.movie.duracion,
+                titulo: props.movie.titulo,
+                reparto: props.movie.reparto,
+                categoria: 'Amor',
+                director: props.movie.director,
+                repartoInput: ''
+            };
+        }
+        else{
+            this.state = {
+                showModal: props.showModal,
+                duracion: 60,
+                titulo: '',
+                reparto: [],
+                categoria: 'Amor',
+                director: '',
+                repartoInput: ''
+            };
+        }
     }
     deleteReparto(name){
         const newReparto = this.state.reparto.filter((str) => {
@@ -21,15 +34,40 @@ class Editor extends React.Component {
         });
         this.setState({reparto: newReparto});
     }
+    resetState(){
+        this.setState({
+                duracion: 60,
+                titulo: '',
+                reparto: [],
+                categoria: 'Amor',
+                director: '',
+                repartoInput: ''
+        })
+    }
     onChange = (value, property) => {
         this.setState({ [property]: value });
       }
+      renderEliminar(){
+          if(!this.props.new)
+            return(
+                <Button variant="danger" style={{marginRight: '45%'}}onClick={() => {
+                    this.props.delete(this.props.movieKey);
+                    this.props.close();
+                    this.resetState();
+                }}>
+                    Eliminar
+                </Button>
+            );
+      }
     render() {
         const { reparto } = this.state;
-        
+        console.log(this.props);
         return (
             <>
-                <Modal show={this.props.showModal} onHide={this.props.close} >
+                <Modal show={this.props.showModal} onHide={() => {
+                    this.props.close();
+                    this.resetState();
+                }} >
                     <Form style={{padding: 16}}>
                         <Form.Group controlId="formBasicEmail">
                             <Form.Label>Título</Form.Label>
@@ -79,13 +117,13 @@ class Editor extends React.Component {
                         </Form.Group>
                     </Form>
                     <Modal.Footer>
-                        <Button variant="danger" style={{marginRight: '45%'}}onClick={() => {
-                                this.props.delete(this.props.movieKey);
-                                this.props.close();
-                            }}>
-                            Eliminar
-                        </Button>
-                        <Button variant="secondary" onClick={this.props.close}>
+                        {
+                            this.renderEliminar()
+                        }
+                        <Button variant="secondary" onClick={() => {
+                            this.props.close();
+                            this.resetState();
+                        }}>
                             Cancelar
                         </Button>
                         <Button disabled={this.state.titulo.length === 0 || this.state.director.length === 0 || this.state.reparto.length == 0} variant="primary" onClick={() => {
@@ -97,6 +135,7 @@ class Editor extends React.Component {
                                 reparto: this.state.reparto
                             }, this.props.movieKey);
                             this.props.close();
+                            this.resetState();
                         }
                         }>
                             Guardar
