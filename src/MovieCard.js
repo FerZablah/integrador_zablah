@@ -1,6 +1,8 @@
 import React from 'react';
 import { Card, Row, Col } from 'react-bootstrap';
-import fist from './fist.svg';
+import bomb from './bomb.svg';
+import ghost from './ghost.svg';
+import heart from './heart.svg';
 import Editor from './modal';
 
 import './App.css';
@@ -18,10 +20,41 @@ class MovieCard extends React.Component {
         this.setState({showModal: false});
         this.props.refresh();
     }
+    getCategoryStyle(){
+        switch(this.props.categoria){
+            case 'Amor':
+                return({
+                    bgColor:'#EE5776',
+                    iconCircleColor: 'white',
+                    icon: heart
+                });
+            case 'Acción':
+                return({
+                    bgColor:'#FF3535',
+                    iconCircleColor: 'white',
+                    icon: bomb
+            });
+            case 'Horror':
+                return({
+                    bgColor:'#485460',
+                    iconCircleColor: 'white',
+                    icon: ghost
+                });
+        }
+            
+    }
     render() {
+        let style = this.getCategoryStyle();
+        if(!style){
+            style={
+                bgColor:'#EE5776',
+                iconCircleColor: 'white',
+                icon: heart
+            }
+        } 
         return (
             <div style={{marginBottom: 30, marginRight: 30}}>
-            <Card style={{ width: '18rem', backgroundColor: '#FF3434', borderRadius: 10, height: 'auto', borderWidth: 0 }}>
+            <Card style={{ width: '18rem', backgroundColor: style.bgColor, borderRadius: 10, height: 'auto', borderWidth: 0 }}>
                 <Row style={{ height: '30px' }}>
                     <Col xs={{ span: 8, offset: 8 }} style={{ color: 'white', marginTop: '5%' }}>
                         <Row>
@@ -32,7 +65,7 @@ class MovieCard extends React.Component {
 
                 </Row>
                 <Row>
-                    <Card.Img className="iconCategoria" src={fist} style={{ height: 50, width: 50, backgroundColor: 'white', borderRadius: '100%', borderWidth: 100, marginLeft: 10, marginTop: 10, padding: 5 }} />
+                    <Card.Img className="iconCategoria" src={style.icon} style={{ color: 'red', height: 50, width: 50, backgroundColor: style.iconCircleColor, borderRadius: '100%', borderWidth: 100, marginLeft: 10, marginTop: 10, padding: 5 }} />
                     <hr className="divisor" style={{ backgroundColor: 'white', width: '100%', height: 10, opacity: 1 }} />
                 </Row>
                 <Card.Body style={{ marginTop: '18%', alignContent: 'flex-end', color: 'white' }}>

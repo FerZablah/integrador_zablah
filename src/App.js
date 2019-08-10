@@ -80,14 +80,14 @@ class App extends React.Component {
        <InputGroup>
           <FormControl
             placeholder={this.state.queryMethod === 'Nombre' ? 'Avengers' : 'Cuarón'}
-            onInput={() => this.handleInput().bind(this)}
+            onInput={() => this.handleInput()}
             aria-describedby="basic-addon2"
             ref='queryInput'
           />
 
           <DropdownButton
             as={InputGroup.Append}
-            variant="outline-secondary"
+            variant="warning"
             title={this.state.queryMethod}
             id="input-group-dropdown-2"
           >
@@ -116,7 +116,7 @@ class App extends React.Component {
             }} >Acción</Button>
           </ButtonGroup>
        
-        <ButtonGroup style={{  marginLeft: 'auto', position: 'absolute', top: 58, right: 0, marginRight: 10}}aria-label="Basic example" >
+        <ButtonGroup style={{  marginLeft: 'auto', position: 'absolute', top: 76, right: 0, marginRight: 10}}aria-label="Basic example" >
           <Button variant="success" onClick={() => this.setState({showModal: true})}>Añadir</Button>
         </ButtonGroup>
         </div>

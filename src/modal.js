@@ -2,6 +2,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Modal, Button, Form, InputGroup, FormControl, Row, Dropdown} from 'react-bootstrap';
+import { tsPropertySignature } from '@babel/types';
 class Editor extends React.Component {
     constructor(props) {
         super(props);
@@ -11,7 +12,7 @@ class Editor extends React.Component {
                 duracion: props.movie.duracion,
                 titulo: props.movie.titulo,
                 reparto: props.movie.reparto,
-                categoria: 'Amor',
+                categoria: props.movie.categoria,
                 director: props.movie.director,
                 repartoInput: ''
             };
@@ -63,6 +64,7 @@ class Editor extends React.Component {
       }
     render() {
         const { reparto } = this.state;
+        console.log(this.props);
         return (
             <>
                 <Modal show={this.props.showModal} onHide={() => {
