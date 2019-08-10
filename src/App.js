@@ -1,5 +1,5 @@
 import React from 'react';
-import { InputGroup, DropdownButton, FormControl, Dropdown, Row } from 'react-bootstrap';
+import { InputGroup, DropdownButton, ButtonGroup, FormControl, Dropdown, Row, Button } from 'react-bootstrap';
 import MovieCard from './MovieCard';
 import './App.css';
 import ReactDOM from 'react-dom';
@@ -26,7 +26,7 @@ function createMovie() {
     ]
   });
 }
-async function queryMovies(name, property) {
+async function queryMovies(name, property, categoria) {
   const snap = await firebase.database().ref('/peliculas').once('value');
   const movies = [];
   snap.forEach(function (childSnapshot) {
@@ -34,9 +34,11 @@ async function queryMovies(name, property) {
     var childData = childSnapshot.val();
     movies.push({ ...childData, key: childKey });
   });
-  const arr = movies.filter((value) => {
+  let arr = movies.filter((value) => {
+    if(categoria)
+      return value[property].toLowerCase().includes(name.toLowerCase()) && value.categoria === categoria;
     return value[property].toLowerCase().includes(name.toLowerCase());
-  })
+  });
   return arr;
 }
 
@@ -47,14 +49,13 @@ function deleteMovie(key){
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { showModal: false, queryMethod: 'Nombre', movies: [] };
+    this.state = { showModal: false, queryMethod: 'Nombre', movies: [], categoria: undefined };
   } 
   modifyMovie(modifiedMovie, key) {
     firebase.database().ref('/peliculas/' + key).set(modifiedMovie);
   }
   componentWillMount(){
-    queryMovies('', this.state.queryMethod.toLowerCase()).then((res) => {
-      console.log('result', res);
+    queryMovies('', this.state.queryMethod.toLowerCase(), this.state.categoria).then((res) => {
       this.setState({movies: res});
     });
   }
@@ -69,16 +70,13 @@ class App extends React.Component {
     deleteMovie(key);
   }
   refreshData(){
-    queryMovies('', this.state.queryMethod.toLowerCase()).then((res) => {
-      console.log('result', res);
+    queryMovies('', this.state.queryMethod.toLowerCase(), this.state.categoria).then((res) => {
       this.setState({movies: res});
     });
   }
   handleInput(){
     const input = ReactDOM.findDOMNode(this.refs.queryInput).value;
-    console.log(input);
-    queryMovies(input, this.state.queryMethod.toLowerCase()).then((res) => {
-      console.log('result', res);
+    queryMovies(input, this.state.queryMethod.toLowerCase(), this.state.categoria).then((res) => {
       this.setState({movies: res});
     });
   }
@@ -88,7 +86,7 @@ class App extends React.Component {
        <InputGroup>
           <FormControl
             placeholder={this.state.queryMethod === 'Nombre' ? 'Avengers' : 'Cuarón'}
-            onInput={() => this.handleInput()}
+            onInput={() => this.handleInput().bind(this)}
             aria-describedby="basic-addon2"
             ref='queryInput'
           />
@@ -103,6 +101,26 @@ class App extends React.Component {
             <Dropdown.Item onClick={() => this.setState({queryMethod: 'Director'})}>Director</Dropdown.Item>
           </DropdownButton>
         </InputGroup>
+        <ButtonGroup aria-label="Basic example" style={{marginTop: 10}}>
+          <Button onClick={() => {
+            this.setState({categoria: this.state.categoria === 'Amor' ? undefined : 'Amor'}, function () {
+              console.log(this.state.categoria);
+              this.refreshData();
+            });
+          }} variant={this.state.categoria === 'Amor' ? "primary" : "secondary"}>Amor</Button>
+          <Button onClick={() => {
+            this.setState({categoria: this.state.categoria === 'Horror' ? undefined : 'Horror'}, function () {
+              console.log(this.state.categoria);
+              this.refreshData();
+            });
+          }} variant={this.state.categoria === 'Horror' ? "primary" : "secondary"}>Horror</Button>
+          <Button  onClick={() => {
+            this.setState({categoria: this.state.categoria === 'Acción' ? undefined : 'Acción'}, function () {
+              console.log(this.state.categoria);
+              this.refreshData();
+            });
+          }} variant={this.state.categoria === 'Acción' ? "primary" : "secondary"}>Acción</Button>
+        </ButtonGroup>
         <Row style={{padding: 30, marginBottom: 30}}>
           {
             this.state.movies.map((movie, idx) => {
