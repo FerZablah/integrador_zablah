@@ -2,7 +2,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Modal, Button, Form, InputGroup, FormControl, Row, Dropdown} from 'react-bootstrap';
-import { tsPropertySignature } from '@babel/types';
 class Editor extends React.Component {
     constructor(props) {
         super(props);
@@ -64,7 +63,7 @@ class Editor extends React.Component {
       }
     render() {
         const { reparto } = this.state;
-        console.log(this.props);
+        if(this.state.duracion > 2880) this.setState({duracion: 2880});
         return (
             <>
                 <Modal show={this.props.showModal} onHide={() => {
@@ -87,7 +86,7 @@ class Editor extends React.Component {
                             </Dropdown>
                             <Form.Label style={{marginTop: 10}}>Duración</Form.Label>
                             <br ></br>
-                            <input type="number" value={this.state.duracion} onChange={(e) => this.onChange(e.target.value, 'duracion')} name="quantity" min="1" placeholder="60" style={{width: 50, padding: 2, marginRight: 3}}></input>min
+                            <input type="number" onPaste={e => e.preventDefault()} onKeyDown={ e => (  e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 107 || e.keyCode === 109 || e.keyCode === 110 || e.keyCode === 187 || e.keyCode === 189) && e.preventDefault() } value={this.state.duracion} onChange={(e) => this.onChange(e.target.value, 'duracion')} name="quantity" min="1" placeholder="60" style={{width: 70, padding: 2, marginRight: 3}}></input>min
                             <br ></br>
                             <Form.Label style={{marginTop: 10}}>Director</Form.Label>
                             <Form.Control type="text" value={this.state.director} onChange={(e) => this.onChange(e.target.value, 'director')} placeholder="Anthony Russo" ref='director' />

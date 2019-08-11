@@ -19,7 +19,7 @@ function createMovie(movie) {
   var newMovieKey = firebase.database().ref('peliculas').push().key;
   firebase.database().ref('peliculas/' + newMovieKey).set(movie);
 }
-async function queryMovies(name, property, categoria) {
+async function queryMovies(input, property, categoria) {
   const snap = await firebase.database().ref('/peliculas').once('value');
   const movies = [];
   snap.forEach(function (childSnapshot) {
@@ -27,11 +27,15 @@ async function queryMovies(name, property, categoria) {
     var childData = childSnapshot.val();
     movies.push({ ...childData, key: childKey });
   });
-  let arr = movies.filter((value) => {
+  let arr = movies.filter((movie) => {
+    let result = movie.nombre.toLowerCase().includes(input.toLowerCase()) || movie.director.toLowerCase().includes(input.toLowerCase());
+    if(property !== 'todo')
+      result = movie[property].toLowerCase().includes(input.toLowerCase());
     if(categoria)
-      return value[property].toLowerCase().includes(name.toLowerCase()) && value.categoria === categoria;
-    return value[property].toLowerCase().includes(name.toLowerCase());
+      result = result && movie.categoria === categoria;
+    return result;
   });
+
   return arr;
 }
 
@@ -42,7 +46,7 @@ function deleteMovie(key){
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { showModal: false, queryMethod: 'Nombre', movies: [], categoria: undefined };
+    this.state = { showModal: false, queryMethod: 'Todo', movies: [], categoria: undefined };
   } 
   modifyMovie(modifiedMovie, key) {
     modifiedMovie.duracion = parseInt(modifiedMovie.duracion);
@@ -91,6 +95,7 @@ class App extends React.Component {
             title={this.state.queryMethod}
             id="input-group-dropdown-2"
           >
+            <Dropdown.Item onClick={() => this.setState({queryMethod: 'Todo'})}>Todo</Dropdown.Item>
             <Dropdown.Item onClick={() => this.setState({queryMethod: 'Nombre'})}>Nombre</Dropdown.Item>
             <Dropdown.Item onClick={() => this.setState({queryMethod: 'Director'})}>Director</Dropdown.Item>
           </DropdownButton>
@@ -126,6 +131,7 @@ class App extends React.Component {
               return (
                 <div key={movie.key}>
                   <MovieCard 
+                    className="card"
                     style={{margin: 10}}
                     titulo={movie.nombre}
                     director={movie.director}
