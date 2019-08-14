@@ -25,19 +25,19 @@ class MovieCard extends React.Component {
         switch(this.props.categoria){
             case 'Amor':
                 return({
-                    bgColor:'#EE5776',
+                    bgColor:'#FF637D',
                     iconCircleColor: 'white',
                     icon: heart
                 });
             case 'Acción':
                 return({
-                    bgColor:'#FF3535',
+                    bgColor:'rgb(0,186,173)',
                     iconCircleColor: 'white',
                     icon: bomb
             });
             case 'Horror':
                 return({
-                    bgColor:'#485460',
+                    bgColor:'#5d6d7e',
                     iconCircleColor: 'white',
                     icon: ghost
                 });
@@ -78,13 +78,14 @@ class MovieCard extends React.Component {
                     delete={this.props.delete}
                     checarDuplicate={this.props.checarDuplicate}
                     showModal={true}
+                    editMode
                     cancel={() => this.setState({edit: false})}
                 />
             );
         }
         return (
             <div style={{marginBottom: 30, marginRight: 30}} >
-            <Card style={{ width: '18rem', backgroundColor: style.bgColor, borderRadius: 10, height: 'auto', borderWidth: 0 }} >
+            <Card className="overflow-hidden" style={{ width: '18rem', backgroundColor: style.bgColor, borderRadius: 10, height: 300, borderWidth: 0 }} >
                 <Row style={{ height: '30px' }}>
                     <Col xs={{ span: 8, offset: 8 }} style={{ color: 'white', marginTop: '5%' }}>
                         <Row>
@@ -98,38 +99,44 @@ class MovieCard extends React.Component {
                     <Card.Img className="iconCategoria" src={style.icon} style={{ color: 'red', height: 50, width: 50, backgroundColor: style.iconCircleColor, borderRadius: '100%', borderWidth: 100, marginLeft: 10, marginTop: 10, padding: 5 }} />
                     <hr className="divisor" style={{ backgroundColor: 'white', width: '100%', height: 10, opacity: 1 }} />
                 </Row>
-                <Card.Body style={{ marginTop: '18%', alignContent: 'flex-end', color: 'white' }}>
+                <Card.Body style={{ margin: 0, marginTop: '18%', height: 'auto', alignContent: 'flex-end', color: 'white' }}>
                     <Card.Title style={{ textAlign: 'left', fontSize: 24 }} >{this.props.titulo}</Card.Title>
                     <Card.Text style={{ textAlign: 'left' }}>
                         {this.props.duracion} min
             </Card.Text>
-                    <div style={{ marginBottom: 10, height: 1 }}>
-
-                    </div>
-                    <div style={{ backgroundColor: 'rgba(255,255, 255, 0.1)', margin: -20, borderBottomLeftRadius: 10, borderBottomRightRadius: 10, padding: '20px' }}>
+                </Card.Body>
+                <Card.Footer style={{ backgroundColor: 'rgba(255,255, 255, 0.1)', height: 400, padding: '8px' }}>
                         <Row style={{ height: '30px' }}>
                             <Col xs={{ span: 4, offset: 0 }}>
-                                <Card.Text style={{ textAlign: 'left', opacity: .5 }}>
-                                    Director
-                </Card.Text>
+                                <Card.Text style={{ textAlign: 'left', opacity: .8, color: 'white' }}>
+                                    <b>Director</b>
+                            </Card.Text>
                             </Col>
                             <Col xs={{ span: 8, offset: 0 }}>
-                                <Card.Text style={{ textAlign: 'left' }}>
+                                <Card.Text style={{ textAlign: 'left', color: 'white' }}>
                                    {this.props.director}
                 </Card.Text>
                             </Col>
                         </Row>
                         <Row style={{ height: 'auto', marginTop: '10px' }}>
                             <Col xs={{ span: 4, offset: 0 }}>
-                                <Card.Text style={{ textAlign: 'left', lineHeight: '2px', opacity: .5 }}>
-                                    Reparto
+                                <Card.Text style={{ textAlign: 'left', lineHeight: '2px', opacity: .8, color: 'white' }}>
+                                    <b>Reparto</b>
                                  </Card.Text>
                             </Col>
                             <Col xs={{ span: 8, offset: 0 }}>
                             {this.props.reparto.map((field, idx) => {
+                                if(idx>2)
+                                    return(
+                                        <div key={`${field}-${idx}`}>
+                                            <p style={{ textAlign: 'left', lineHeight: '2px', color: 'white' }}>
+                                                ...
+                                            </p>
+                                        </div>
+                                    )
                                     return (
                                         <div key={`${field}-${idx}`}>
-                                            <p style={{ textAlign: 'left', lineHeight: '2px' }}>
+                                            <p style={{ textAlign: 'left', lineHeight: '2px', color: 'white' }}>
                                                 {field}
                                             </p>
                                         </div>
@@ -137,9 +144,7 @@ class MovieCard extends React.Component {
                                 })}
                             </Col>
                         </Row>
-                    </div>
-                </Card.Body>
-        <Editor showModal={this.state.showModal} checarDuplicate={this.props.checarDuplicate} delete={this.props.delete} close={this.handleClose.bind(this)} save={this.props.save} movie={this.props} movieKey={this.props.movieKey}></Editor>
+                    </Card.Footer>
             </Card>
             </div>
         );

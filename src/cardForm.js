@@ -38,7 +38,7 @@ class CardForm extends React.Component {
         this.state = {
             ...this.state, showConfirm: false
         }
-        console.log(this.state);
+        
     }
     resetState(){
         this.setState({
@@ -61,19 +61,19 @@ class CardForm extends React.Component {
         switch(this.state.categoria){
             case 'Amor':
                 return({
-                    bgColor:'#EE5776',
+                    bgColor:'#FF637D',
                     iconCircleColor: 'white',
                     icon: heart
                 });
             case 'Acción':
                 return({
-                    bgColor:'#FF3535',
+                    bgColor:'rgb(0,186,173)',
                     iconCircleColor: 'white',
                     icon: bomb
                 });
             case 'Horror':
                 return({
-                    bgColor:'#485460',
+                    bgColor:'#5d6d7e',
                     iconCircleColor: 'white',
                     icon: ghost
                 });
@@ -121,6 +121,11 @@ class CardForm extends React.Component {
             }
         }
         const canSave = this.validateInputs();
+        const deleteButton = this.props.movieToEdit ? 
+        <Button variant="danger" onClick={() => {
+                this.setState({showConfirm: true});
+                
+        }} style={{margin: 0, marginRight: 10, marginLeft: 'auto', marginTop: 10}}>Borrar</Button> : null;
         return (
             <Collapse in={this.props.showModal}>
              
@@ -196,7 +201,7 @@ class CardForm extends React.Component {
                                     className="edit" style={{margin: 0, marginLeft: 10, padding: 0, width:'20%', height:30, borderRadius: 90, textAlign: 'center', color: 'white', backgroundColor: 'green', fontSize: 20}}>+</button>
                                 </Row>
                                 {
-                                    this.state.reparto.map((protagonista) => {
+                                    this.state.reparto.map((protagonista, i) => {
                                         return(
                                             <Row key={protagonista} style={{margin: 0, marginTop: 10, alignItems: 'center'}}> 
                                                 <p style={{margin: 0, borderRadius: 10, padding: 3, width:'70%', textAlign: 'left', backgroundColor: 'rgba(255,255,255, 0.3)'}}>{protagonista}</p>
@@ -206,16 +211,13 @@ class CardForm extends React.Component {
                                     })
                                 }
                             </Col>
-                            <Button variant="danger" onClick={() => {
-                                    this.setState({showConfirm: true});
-                                    
-                            }} style={{margin: 0, marginRight: 10, marginLeft: 'auto', marginTop: 10}}>Borrar</Button>
+                            {deleteButton}
                             <Button variant="secondary" onClick={() => {
                                     this.props.cancel();
                                     this.resetState();
                             }} style={{margin: 0, marginRight: 10, marginLeft: 'auto', marginTop: 10}}>Cancelar</Button>
                             <Button variant="success" disabled={!canSave} onClick={() => {
-                                const duplicado = this.props.checarDuplicate(this.state.nombre, this.props.movieKey, this.state.director);
+                                const duplicado = this.props.checarDuplicate(this.state.nombre, this.state.movieKey, this.state.director);
                                 if(!duplicado){
                                     this.props.save({
                                         nombre: this.state.nombre,
@@ -235,7 +237,7 @@ class CardForm extends React.Component {
                         </Row>
                     </div>
                 </Card.Body>
-                <Modal show={this.state.showConfirm}>
+                <Modal show={this.state.showConfirm} onHide={() => this.setState({showConfirm: false})} backdrop>
                 <Modal.Header closeButton>
                     <Modal.Title>{`¿Seguro que desea borrar ${this.state.nombre}?`}</Modal.Title>
                 </Modal.Header>

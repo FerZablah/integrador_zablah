@@ -1,5 +1,5 @@
 import React from 'react';
-import { InputGroup, DropdownButton, ButtonGroup, FormControl, Dropdown, Row, Button } from 'react-bootstrap';
+import { InputGroup, DropdownButton, ButtonGroup, FormControl, Dropdown, Row, Button, Container } from 'react-bootstrap';
 import MovieCard from './MovieCard';
 import './App.css';
 import ReactDOM from 'react-dom';
@@ -43,7 +43,11 @@ class App extends React.Component {
         result = result && movie.categoria === categoria;
       return result;
     });
-  
+    arr.sort((a, b) => {
+      if(a.nombre < b.nombre) { return -1; }
+      if(a.nombre > b.nombre) { return 1; }
+      return 0;
+    });
     return arr;
   }
   
@@ -91,6 +95,8 @@ class App extends React.Component {
     let duplicate = false;
     this.state.allMovies.forEach((movie) => {
       if(key!==movie.key){
+        console.log(key);
+        console.log(movie.key);
         if(movie.nombre.trim()===titulo.trim() && movie.director === director) {
           duplicate = true;
         }
@@ -100,10 +106,11 @@ class App extends React.Component {
   }
   render() {
     return (
+      <Container>
       <div className="App" style={{ margin: 10 }}>
        <InputGroup>
           <FormControl
-            placeholder={this.state.queryMethod === 'Nombre' ? 'Avengers' : 'Cuarón'}
+            placeholder={this.state.queryMethod === 'Nombre' ? 'Buscar por título' : this.state.queryMethod === 'Director' ? 'Buscar por director' : 'Buscar por título o director'}
             onInput={() => this.handleInput()}
             aria-describedby="basic-addon2"
             ref='queryInput'
@@ -122,7 +129,7 @@ class App extends React.Component {
         </InputGroup>
         
         <div className="d-flex justify-content-center" style={{width: '100%', marginTop: 20}}>
-        <ButtonGroup style={{  marginRight: 'auto', position: 'absolute', top: 76, right: 10}}aria-label="Basic example" >
+        <ButtonGroup style={{  marginRight: 'auto', }}aria-label="Basic example" >
           <Button variant="success" onClick={() => this.setState({showModal: true})}>Añadir</Button>
         </ButtonGroup>
           <ButtonGroup aria-label="Basic example"  style={{marginTop: 10}}>
@@ -185,6 +192,7 @@ class App extends React.Component {
         </Row>
         <Editor new showModal={false} checarDuplicate={this.checarDuplicate.bind(this)} save={this.handleSave} close={this.handleClose.bind(this)}></Editor>
       </div>
+      </Container>
     );
   }
 
