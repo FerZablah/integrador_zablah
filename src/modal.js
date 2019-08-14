@@ -73,7 +73,8 @@ class Editor extends React.Component {
                     <Form style={{padding: 16}}>
                         <Form.Group controlId="formBasicEmail">
                             <Form.Label>Título</Form.Label>
-                            <Form.Control value={this.state.titulo} onChange={(e) => this.onChange(e.target.value, 'titulo')}  type="text" placeholder="Avengers: Endgame" ref='nombre' />
+                            <Form.Control value={this.state.titulo} onChange={(e) => this.onChange(e.target.value, 'titulo')}  type="text" maxLength="30" placeholder="Avengers: Endgame" ref='nombre' />
+                            <p>ERROR</p>
                             <Dropdown style={{marginTop: 10}}>
                                 <Dropdown.Toggle variant="info" id="dropdown-basic">
                                     {this.state.categoria}
@@ -89,7 +90,7 @@ class Editor extends React.Component {
                             <input type="number" onPaste={e => e.preventDefault()} onKeyDown={ e => (  e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 107 || e.keyCode === 109 || e.keyCode === 110 || e.keyCode === 187 || e.keyCode === 189) && e.preventDefault() } value={this.state.duracion} onChange={(e) => this.onChange(e.target.value, 'duracion')} name="quantity" min="1" placeholder="60" style={{width: 70, padding: 2, marginRight: 3}}></input>min
                             <br ></br>
                             <Form.Label style={{marginTop: 10}}>Director</Form.Label>
-                            <Form.Control type="text" value={this.state.director} onChange={(e) => this.onChange(e.target.value, 'director')} placeholder="Anthony Russo" ref='director' />
+                            <Form.Control type="text"maxLength="30" value={this.state.director} onChange={(e) => this.onChange(e.target.value, 'director')} placeholder="Anthony Russo" ref='director' />
                             <Form.Label style={{marginTop: 10}}>Reparto</Form.Label>
                             
                             <InputGroup style={{ marginTop: 10 }}>
@@ -97,6 +98,7 @@ class Editor extends React.Component {
                                     placeholder={'Robert Downey Jr.'}
                                     aria-describedby="basic-addon2"
                                     ref='reparto'
+                                    maxLength="30"
                                     value={this.state.repartoInput}
                                     onChange={(e) => this.onChange(e.target.value, 'repartoInput')}
                                 />
@@ -129,15 +131,19 @@ class Editor extends React.Component {
                             Cancelar
                         </Button>
                         <Button disabled={this.state.titulo.length === 0 || this.state.director.length === 0 || this.state.reparto.length == 0} variant="primary" onClick={() => {
-                            this.props.save({
-                                nombre: this.state.titulo,
-                                director: this.state.director,
-                                duracion: this.state.duracion,
-                                categoria: this.state.categoria,
-                                reparto: this.state.reparto
-                            }, this.props.movieKey);
-                            this.props.close();
-                            this.resetState();
+                            if(!this.props.checarDuplicate(this.state.titulo, this.props.movieKey)){
+                                this.props.save({
+                                    nombre: this.state.titulo,
+                                    director: this.state.director,
+                                    duracion: this.state.duracion,
+                                    categoria: this.state.categoria,
+                                    reparto: this.state.reparto
+                                }, this.props.movieKey);
+                                this.props.close();
+                                this.resetState();
+                            }
+                            else{
+                            }
                         }
                         }>
                             Guardar

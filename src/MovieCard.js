@@ -53,7 +53,7 @@ class MovieCard extends React.Component {
                 iconCircleColor: 'white',
                 icon: heart
             }
-        } 
+        }
         return (
             <div style={{marginBottom: 30, marginRight: 30}} >
             <Card style={{ width: '18rem', backgroundColor: style.bgColor, borderRadius: 10, height: 'auto', borderWidth: 0 }} >
@@ -111,8 +111,7 @@ class MovieCard extends React.Component {
                         </Row>
                     </div>
                 </Card.Body>
-                
-        <Editor showModal={this.state.showModal} delete={this.props.delete} close={this.handleClose.bind(this)} save={this.props.save} movie={this.props} movieKey={this.props.movieKey}></Editor>
+        <Editor showModal={this.state.showModal} checarDuplicate={this.props.checarDuplicate} delete={this.props.delete} close={this.handleClose.bind(this)} save={this.props.save} movie={this.props} movieKey={this.props.movieKey}></Editor>
             </Card>
             </div>
         );
