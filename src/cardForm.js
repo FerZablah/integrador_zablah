@@ -9,16 +9,49 @@ import './App.css';
 class CardForm extends React.Component {
     constructor(props) {
         super(props);
-        this.state={
+        if(props.movieToEdit){
+            const { categoria, duracion, director, reparto, nombre, movieKey} = props.movieToEdit;
+            this.state={
+                categoria,
+                showCard: true,
+                duracion,
+                director,
+                reparto,
+                repartoInput: '',
+                nombre,
+                errorNombre: false,
+                movieKey
+            }
+        }
+        else {
+            this.state={
+                categoria: 'Categoria',
+                showCard: true,
+                duracion: 60,
+                director: '',
+                reparto: [],
+                repartoInput: '',
+                nombre: '',
+                errorNombre: false
+            }
+        }
+        console.log(this.state);
+    }
+    resetState(){
+        this.setState({
             categoria: 'Categoria',
             showCard: true,
             duracion: 60,
             director: '',
             reparto: [],
-            repartoInput: ''
-        }
+            repartoInput: '',
+            nombre: ''
+        }, () => {
+            this.props.cancel();
+        });
     }
     onChange = (value, property) => {
+        if(property==='nombre') this.setState({errorNombre: false});
         this.setState({ [property]: value });
       }
     getCategoryStyle(){
@@ -65,6 +98,7 @@ class CardForm extends React.Component {
         bool = bool && this.state.categoria !== 'Categoria';
         return bool;
     }
+    
     handleClose(){
         this.setState({showCard: false});
         this.setState({
@@ -85,7 +119,6 @@ class CardForm extends React.Component {
         }
         const canSave = this.validateInputs();
         return (
-            
             <Collapse in={this.props.showModal}>
             <Card style={{ width: '18rem', backgroundColor: style.bgColor, borderRadius: 10, height: 'auto', borderWidth: 0, marginRight: 30, marginBottom: 20 }} >
                 <Row style={{ height: '30px' }}>
@@ -111,7 +144,12 @@ class CardForm extends React.Component {
                 <Card.Body style={{ marginTop: '18%', alignContent: 'flex-end', color: 'white' }}>
                 <Form.Group className="d-flex flex-column bd-highlight mb-3" controlId="formBasicEmail">
                 
-                <Form.Control onChange={(e) => this.onChange(e.target.value, 'nombre')} type="text" maxLength="30"  style={{heigh: 10, fontSize: 14}} placeholder="Avengers" ref='nombre' />
+                <Form.Control value={this.state.nombre} onChange={(e) => this.onChange(e.target.value, 'nombre')} type="text" maxLength="30"  style={{heigh: 10, fontSize: 14}} placeholder="Avengers" ref='nombre' />
+                    {this.state.errorNombre ?
+                        <p style={{color: 'white', padding: 10, borderRadius: 10, textAlign: 'left', backgroundColor: 'rgba(255,0,0,0.3)'}}>{`La pelicula "${this.state.nombre}" dirigida por ${this.state.director} ya existe`}</p>
+                        :
+                        null
+                    }
                     <div style={{width: 100, marginTop: 10}}>
                         <input type="number"
                             onPaste={e => e.preventDefault()}
@@ -135,7 +173,7 @@ class CardForm extends React.Component {
                                 </Card.Text>
                             </Col>
                             <Col xs={{ span: 8, offset: 0 }}>
-                            <Form.Control onChange={(e) => this.onChange(e.target.value, 'director')} type="text" maxLength="30"  style={{heigh: 10, fontSize: 14}} placeholder="Anthony Russo" ref='director' />
+                            <Form.Control value={this.state.director} onChange={(e) => this.onChange(e.target.value, 'director')} type="text" maxLength="30"  style={{heigh: 10, fontSize: 14}} placeholder="Anthony Russo" ref='director' />
                             </Col>
                         </Row>
                         <Row style={{ height: 'auto', marginTop: '10px' }}>
@@ -148,7 +186,7 @@ class CardForm extends React.Component {
                                 <Row style={{margin: 0, marginTop: 10, alignItems: 'center'}}>
                                     <Form.Control onChange={(e) => this.onChange(e.target.value, 'repartoInput')} type="text" maxLength="30" value={this.state.repartoInput} style={{width:'70%', heigh: 10, fontSize: 14}} placeholder="Anthony Russo" ref='director' />
                                     <button onClick={() => {
-                                        if(this.state.repartoInput !== '')
+                                        if(this.state.repartoInput !== '' && !this.state.reparto.includes(this.state.repartoInput))
                                             this.setState({reparto: [...this.state.reparto, this.state.repartoInput], repartoInput: ''});
                                     }}
                                     className="edit" style={{margin: 0, marginLeft: 10, padding: 0, width:'20%', height:30, borderRadius: 90, textAlign: 'center', color: 'white', backgroundColor: 'green', fontSize: 20}}>+</button>
@@ -156,7 +194,7 @@ class CardForm extends React.Component {
                                 {
                                     this.state.reparto.map((protagonista) => {
                                         return(
-                                            <Row style={{margin: 0, marginTop: 10, alignItems: 'center'}}> 
+                                            <Row key={protagonista} style={{margin: 0, marginTop: 10, alignItems: 'center'}}> 
                                                 <p style={{margin: 0, borderRadius: 10, padding: 3, width:'70%', textAlign: 'left', backgroundColor: 'rgba(255,255,255, 0.3)'}}>{protagonista}</p>
                                                 <button onClick={() => this.deleteProtagonista(protagonista)} className="edit" style={{margin: 0, marginLeft: 10, padding: 0, width:'20%', height:30, borderRadius: 90, textAlign: 'center', color: 'white', backgroundColor: 'red', fontSize: 20}}>-</button>
                                             </Row>
@@ -164,16 +202,29 @@ class CardForm extends React.Component {
                                     })
                                 }
                             </Col>
-                            <Button variant="danger" onClick={this.props.cancel} style={{margin: 0, marginRight: 10, marginLeft: 'auto', marginTop: 10}}>Cancelar</Button>
+                            <Button variant="danger" onClick={() => {
+                                    this.props.delete(this.state.movieKey);
+                            }} style={{margin: 0, marginRight: 10, marginLeft: 'auto', marginTop: 10}}>Borrar</Button>
+                            <Button variant="secondary" onClick={() => {
+                                    this.props.cancel();
+                                    this.resetState();
+                            }} style={{margin: 0, marginRight: 10, marginLeft: 'auto', marginTop: 10}}>Cancelar</Button>
                             <Button variant="success" disabled={!canSave} onClick={() => {
-                                this.props.save({
-                                    nombre: this.state.nombre,
-                                    director: this.state.director,
-                                    reparto: this.state.reparto,
-                                    categoria: this.state.categoria,
-                                    duracion: this.state.duracion
-                                });
-                                this.props.cancel();
+                                const duplicado = this.props.checarDuplicate(this.state.nombre, this.props.movieKey, this.state.director);
+                                if(!duplicado){
+                                    this.props.save({
+                                        nombre: this.state.nombre,
+                                        director: this.state.director,
+                                        duracion: this.state.duracion,
+                                        categoria: this.state.categoria,
+                                        reparto: this.state.reparto
+                                    }, this.state.movieKey);
+                                    this.resetState();
+                                    this.props.cancel();
+                                }
+                                else{
+                                    this.setState({errorNombre: true});
+                                }
                             }
                             } style={{margin: 0, marginRight: 10, marginLeft: 'auto', marginTop: 10}}>Guardar</Button>
                         </Row>

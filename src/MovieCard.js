@@ -4,8 +4,8 @@ import bomb from './bomb.svg';
 import ghost from './ghost.svg';
 import heart from './heart.svg';
 import Editor from './modal';
-
 import './App.css';
+import CardForm from './cardForm';
 
 class MovieCard extends React.Component {
     constructor(props) {
@@ -59,6 +59,29 @@ class MovieCard extends React.Component {
                 icon: heart
             }
         }
+        if(this.state.edit){
+            const movieToEdit = {
+                categoria: this.props.categoria,
+                duracion: this.props.duracion,
+                director: this.props.director,
+                reparto: this.props.reparto,
+                nombre: this.props.titulo,
+                movieKey: this.props.movieKey
+            }
+            return (
+                <CardForm
+                    className="card"
+                    movieToEdit={movieToEdit}
+                    style={{margin: 10}}
+                    save={this.props.save}
+                    refresh={this.props.refresh}
+                    delete={this.props.delete}
+                    checarDuplicate={this.props.checarDuplicate}
+                    showModal={true}
+                    cancel={() => this.setState({edit: false})}
+                />
+            );
+        }
         return (
             <div style={{marginBottom: 30, marginRight: 30}} >
             <Card style={{ width: '18rem', backgroundColor: style.bgColor, borderRadius: 10, height: 'auto', borderWidth: 0 }} >
@@ -66,7 +89,7 @@ class MovieCard extends React.Component {
                     <Col xs={{ span: 8, offset: 8 }} style={{ color: 'white', marginTop: '5%' }}>
                         <Row>
                             {this.props.categoria}
-               <button onClick={this.handleClick} className="edit" ref="editButton" type="submit" variant="primary" style={{ marginTop: 4, marginLeft: 4, height: 20, width: 33, fontSize: 10, textAlign: 'center', color: 'white', borderRadius: '10%' }}>edit</button>
+               <button onClick={() => this.setState({edit: true})} className="edit" ref="editButton" type="submit" variant="primary" style={{ marginTop: 4, marginLeft: 4, height: 20, width: 33, fontSize: 10, textAlign: 'center', color: 'white', borderRadius: '10%' }}>edit</button>
                         </Row>
                     </Col>
 

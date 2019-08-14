@@ -52,10 +52,16 @@ class App extends React.Component {
     firebase.database().ref('peliculas/' + newMovieKey).set(movie);
   }
   modifyMovie(modifiedMovie, key) {
+    console.log('modifying movie');
     modifiedMovie.duracion = parseInt(modifiedMovie.duracion);
     firebase.database().ref('/peliculas/' + key).set(modifiedMovie);
   }
   componentWillMount(){
+    firebase.database().ref('/peliculas').on('value', () => {
+      this.queryMovies('', this.state.queryMethod.toLowerCase(), this.state.categoria).then((res) => {
+        this.setState({movies: res});
+      });
+    });
     this.queryMovies('', this.state.queryMethod.toLowerCase(), this.state.categoria).then((res) => {
       this.setState({movies: res});
     });
