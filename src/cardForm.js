@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Collapse, Row, Col, Dropdown, Button, Form, DropdownButton, InputGroup } from 'react-bootstrap';
+import { Card, Collapse, Row, Col, Dropdown, Button, Form, DropdownButton, InputGroup, Modal } from 'react-bootstrap';
 import bomb from './bomb.svg';
 import ghost from './ghost.svg';
 import heart from './heart.svg';
@@ -34,6 +34,9 @@ class CardForm extends React.Component {
                 nombre: '',
                 errorNombre: false
             }
+        }
+        this.state = {
+            ...this.state, showConfirm: false
         }
         console.log(this.state);
     }
@@ -120,6 +123,7 @@ class CardForm extends React.Component {
         const canSave = this.validateInputs();
         return (
             <Collapse in={this.props.showModal}>
+             
             <Card style={{ width: '18rem', backgroundColor: style.bgColor, borderRadius: 10, height: 'auto', borderWidth: 0, marginRight: 30, marginBottom: 20 }} >
                 <Row style={{ height: '30px' }}>
                     <Col xs={{ span: 8, offset: 6 }} style={{ color: 'white', marginTop: '5%' }}>
@@ -203,7 +207,8 @@ class CardForm extends React.Component {
                                 }
                             </Col>
                             <Button variant="danger" onClick={() => {
-                                    this.props.delete(this.state.movieKey);
+                                    this.setState({showConfirm: true});
+                                    
                             }} style={{margin: 0, marginRight: 10, marginLeft: 'auto', marginTop: 10}}>Borrar</Button>
                             <Button variant="secondary" onClick={() => {
                                     this.props.cancel();
@@ -230,6 +235,19 @@ class CardForm extends React.Component {
                         </Row>
                     </div>
                 </Card.Body>
+                <Modal show={this.state.showConfirm}>
+                <Modal.Header closeButton>
+                    <Modal.Title>{`¿Seguro que desea borrar ${this.state.nombre}?`}</Modal.Title>
+                </Modal.Header>
+                <Modal.Footer>   
+                <Button variant="secondary" style={{marginRight: 'auto'}} onClick={() => this.setState({showConfirm: false})}>
+                    Cancelar
+                </Button>
+                <Button variant="danger" onClick={() => this.props.delete(this.state.movieKey)}>
+                    Borrar
+                </Button>
+                </Modal.Footer>
+            </Modal>   
             </Card>
             </Collapse>
         );
