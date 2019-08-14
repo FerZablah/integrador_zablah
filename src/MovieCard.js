@@ -4,7 +4,6 @@ import bomb from './bomb.svg';
 import ghost from './ghost.svg';
 import heart from './heart.svg';
 import Editor from './modal';
-import ReactDOM from 'react-dom';
 
 import './App.css';
 
@@ -41,6 +40,12 @@ class MovieCard extends React.Component {
                     bgColor:'#485460',
                     iconCircleColor: 'white',
                     icon: ghost
+                });
+            default: 
+                return({
+                    bgColor:'#EE5776',
+                    iconCircleColor: 'white',
+                    icon: heart
                 });
         }
             

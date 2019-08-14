@@ -43,7 +43,7 @@ class CardForm extends React.Component {
                 });
             default:
                 return({
-                    bgColor:'#27ae60',
+                    bgColor:'#F79F1F',
                     iconCircleColor: 'white',
                     icon: film
                 });
@@ -84,7 +84,6 @@ class CardForm extends React.Component {
             }
         }
         const canSave = this.validateInputs();
-        console.log(this.props);
         return (
             
             <Collapse in={this.props.showModal}>
@@ -114,12 +113,12 @@ class CardForm extends React.Component {
                 
                 <Form.Control onChange={(e) => this.onChange(e.target.value, 'nombre')} type="text" maxLength="30"  style={{heigh: 10, fontSize: 14}} placeholder="Avengers" ref='nombre' />
                     <div style={{width: 100, marginTop: 10}}>
-                        <input type="number" style={{alignSelf: 'flex-start'}}
+                        <input type="number"
                             onPaste={e => e.preventDefault()}
                             onKeyDown={ e => (  e.keyCode === 69 || e.keyCode === 190 || e.keyCode === 107 || e.keyCode === 109 || e.keyCode === 110 || e.keyCode === 187 || e.keyCode === 189) && e.preventDefault() }
                             value={this.state.duracion} onChange={(e) => this.onChange(e.target.value, 'duracion')}
                             name="quantity" min="1" placeholder="60" 
-                            style={{width: 70, padding: 2, marginRight: 3}}
+                            style={{alignSelf: 'flex-start', width: 70, padding: 2, marginRight: 3}}
                         />
                         min 
                     </div>

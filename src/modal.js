@@ -13,7 +13,8 @@ class Editor extends React.Component {
                 reparto: props.movie.reparto,
                 categoria: props.movie.categoria,
                 director: props.movie.director,
-                repartoInput: ''
+                repartoInput: '',
+                errorNombre: false
             };
         }
         else{
@@ -47,20 +48,21 @@ class Editor extends React.Component {
         }
     }
     onChange = (value, property) => {
+        if(property==='titulo') this.setState({errorNombre: false});
         this.setState({ [property]: value });
-      }
-      renderEliminar(){
-          if(!this.props.new)
-            return(
-                <Button variant="danger" style={{marginRight: '45%'}}onClick={() => {
-                    this.props.delete(this.props.movieKey);
-                    this.props.close();
-                    this.resetState();
-                }}>
-                    Eliminar
-                </Button>
-            );
-      }
+    }
+    renderEliminar(){
+        if(!this.props.new)
+        return(
+            <Button variant="danger" style={{marginRight: '45%'}}onClick={() => {
+                this.props.delete(this.props.movieKey);
+                this.props.close();
+                this.resetState();
+            }}>
+                Eliminar
+            </Button>
+        );
+    }
     render() {
         const { reparto } = this.state;
         if(this.state.duracion > 2880) this.setState({duracion: 2880});
@@ -73,8 +75,12 @@ class Editor extends React.Component {
                     <Form style={{padding: 16}}>
                         <Form.Group controlId="formBasicEmail">
                             <Form.Label>Título</Form.Label>
-                            <Form.Control value={this.state.titulo} onChange={(e) => this.onChange(e.target.value, 'titulo')}  type="text" maxLength="30" placeholder="Avengers: Endgame" ref='nombre' />
-                            <p>ERROR</p>
+                            <Form.Control required isValid={false} value={this.state.titulo} onChange={(e) => this.onChange(e.target.value, 'titulo')}  type="text" maxLength="30" placeholder="Avengers: Endgame" ref='nombre' />
+                            {this.state.errorNombre ?
+                                <p style={{color: 'red'}}>{`La pelicula "${this.state.titulo}" dirigida por ${this.state.director} ya existe`}</p>
+                                :
+                                null
+                            }
                             <Dropdown style={{marginTop: 10}}>
                                 <Dropdown.Toggle variant="info" id="dropdown-basic">
                                     {this.state.categoria}
@@ -130,8 +136,9 @@ class Editor extends React.Component {
                         }}>
                             Cancelar
                         </Button>
-                        <Button disabled={this.state.titulo.length === 0 || this.state.director.length === 0 || this.state.reparto.length == 0} variant="primary" onClick={() => {
-                            if(!this.props.checarDuplicate(this.state.titulo, this.props.movieKey)){
+                        <Button disabled={this.state.titulo.length === 0 || this.state.director.length === 0 || this.state.reparto.length === 0} variant="primary" onClick={() => {
+                            const duplicado = this.props.checarDuplicate(this.state.titulo, this.props.movieKey, this.state.director);
+                            if(!duplicado){
                                 this.props.save({
                                     nombre: this.state.titulo,
                                     director: this.state.director,
@@ -143,6 +150,7 @@ class Editor extends React.Component {
                                 this.resetState();
                             }
                             else{
+                                this.setState({errorNombre: true});
                             }
                         }
                         }>

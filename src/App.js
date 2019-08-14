@@ -81,12 +81,16 @@ class App extends React.Component {
   handleSave(movie){
     this.createMovie(movie);
   }
-  checarDuplicate(titulo, key){
+  checarDuplicate(titulo, key, director){
+    let duplicate = false;
     this.state.allMovies.forEach((movie) => {
-      if(key !== movie.key && movie.nombre===titulo) {
-        return true;
+      if(key!==movie.key){
+        if(movie.nombre.trim()===titulo.trim() && movie.director === director) {
+          duplicate = true;
+        }
       }
     });
+    return duplicate;
   }
   render() {
     return (
@@ -112,7 +116,7 @@ class App extends React.Component {
         </InputGroup>
         
         <div className="d-flex justify-content-center" style={{width: '100%', marginTop: 20}}>
-        <ButtonGroup style={{  marginRight: 'auto', position: 'absolute', top: 76, right: 0, marginRight: 10}}aria-label="Basic example" >
+        <ButtonGroup style={{  marginRight: 'auto', position: 'absolute', top: 76, right: 10}}aria-label="Basic example" >
           <Button variant="success" onClick={() => this.setState({showModal: true})}>Añadir</Button>
         </ButtonGroup>
           <ButtonGroup aria-label="Basic example"  style={{marginTop: 10}}>
