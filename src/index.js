@@ -4,6 +4,8 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import * as Sentry from '@sentry/browser';
+Sentry.init({dsn: "https://dbb0f5927f364e3ea3908db580eff78e@sentry.io/1844998"});
 
 ReactDOM.render(<App />, document.getElementById('root'));
 

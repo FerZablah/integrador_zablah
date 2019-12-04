@@ -5,6 +5,8 @@ import './App.css';
 import ReactDOM from 'react-dom';
 import Editor from './modal';
 import * as firebase from 'firebase';
+import * as Sentry from '@sentry/browser';
+
 import CardForm from './cardForm.js';
 firebase.initializeApp({
   apiKey: "AIzaSyDYMYYByMXC0FApCX0srt6BpyKcFt87dd8",
@@ -17,15 +19,22 @@ firebase.initializeApp({
 });
 
 
-function deleteMovie(key){
-  firebase.database().ref('/peliculas/'+key).set({});
-}
-
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { showModal: false, queryMethod: 'Todo', movies: [], categoria: undefined };
+    this.state = { showModal: false, queryMethod: 'Todo', movies: [], categoria: undefined, eventId: null };
   } 
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    Sentry.withScope((scope) => {
+        scope.setExtras(errorInfo);
+        const eventId = Sentry.captureException(error);
+        this.setState({eventId});
+    });
+  }
   async queryMovies(input, property, categoria) {
     const snap = await firebase.database().ref('/peliculas').once('value');
     const movies = [];
@@ -70,8 +79,10 @@ class App extends React.Component {
       this.setState({movies: res});
     });
   }
+  deleteMovie(){}
+
   handleDelete(key){
-    deleteMovie(key);
+    //deleteMovie(key);
   }
   refreshData(){
     this.queryMovies('', this.state.queryMethod.toLowerCase(), this.state.categoria).then((res) => {
@@ -105,9 +116,16 @@ class App extends React.Component {
     return duplicate;
   }
   render() {
+    if (this.state.hasError) {
+      //render fallback UI
+      return (
+        <button onClick={() => Sentry.showReportDialog({ eventId: this.state.eventId })}>Report feedback</button>
+      );
+  }
     return (
       <Container>
       <div className="App" style={{ margin: 10 }}>
+      <button onClick={() => this.methodDoesNotExist()}>Break the world</button>;
        <InputGroup>
           <FormControl
             placeholder={this.state.queryMethod === 'Nombre' ? 'Buscar por título' : this.state.queryMethod === 'Director' ? 'Buscar por director' : 'Buscar por título o director'}
